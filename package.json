@@ -2,8 +2,9 @@
   "name": "chek-api-auth",
   "version": "1.0.0",
   "description": "api for auth actions",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start:dev": "ts-node ./src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint . --ext .ts --fix"
   },
