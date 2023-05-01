@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { IAuthRepository } from './auth.repository';
 import { User } from './user.model';
 
@@ -9,13 +10,16 @@ export class AuthService implements IAuthService {
     repository: IAuthRepository;
     constructor(repo: IAuthRepository) {
         this.repository = repo;
-        this.login = this.login.bind(this);
     }
 
     async login(email: string, password: string) {
         try {
             const user = await this.repository.getByEmail(email);
-            if (user.password !== password) {
+            if (!user) {
+                throw new Error('Email not found');
+            }
+            const hashedPassword = bcrypt.hashSync(password, 10);
+            if (hashedPassword !== password) {
                 throw new Error('Invalid credentials');
             }
             return user;
