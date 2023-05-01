@@ -5,6 +5,7 @@ export class AuthMiddleware {
     service: IAuthService;
     constructor(service: IAuthService) {
         this.service = service;
+        this.login = this.login.bind(this);
     }
 
     async login(req: Request, res: Response) {

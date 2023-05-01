@@ -13,6 +13,12 @@ export class AuthRepositoryDB implements IAuthRepository{
     private readonly getByIdQuery = "SELECT id, name, lastname, email, password, jwt_token FROM users WHERE id = ?";
     private readonly getByEmailQuery = "SELECT id, name, lastname, email, password FROM users WHERE email = ?";
 
+    constructor() {
+        this.getById = this.getById.bind(this);
+        this.getByEmail = this.getByEmail.bind(this);
+        this.insert = this.insert.bind(this);
+    }
+
     async getById(id: string): Promise<User> {
         let connection: PoolConnection | undefined;
         try {

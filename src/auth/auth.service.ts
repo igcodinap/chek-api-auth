@@ -9,6 +9,7 @@ export class AuthService implements IAuthService {
     repository: IAuthRepository;
     constructor(repo: IAuthRepository) {
         this.repository = repo;
+        this.login = this.login.bind(this);
     }
 
     async login(email: string, password: string) {
