@@ -15,11 +15,12 @@ export class AuthService implements IAuthService {
     async login(email: string, password: string) {
         try {
             const user = await this.repository.getByEmail(email);
-            console.log(user)
+            console.log(user, 'user at auth service')
             if (!user) {
                 throw new Error('Email not found');
             }
-            const isValid = PasswordService.comparePasswords(password, user.password);
+            const isValid = await PasswordService.comparePasswords(password, user.password);
+            console.log(isValid, 'isValid')
             if (!isValid) {
                 throw new Error('Invalid credentials');
             }
@@ -27,7 +28,7 @@ export class AuthService implements IAuthService {
             console.log(user.jwt_token, 'jwt_token')
             return user;
         } catch (error) {
-            console.log(error)
+            console.log(error, 'error at auth service')
             throw error;
         }
     }

@@ -11,6 +11,7 @@ export class AuthMiddleware {
     async login(req: Request, res: Response) {
         const { email, password } = req.body;
         try {
+            console.log('login at auth middleware')
             const user = await this.service.login(email, password);
             res.status(200).json(user);
         } catch (error) {
