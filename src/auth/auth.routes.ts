@@ -10,4 +10,4 @@ const auth = new AuthMiddleware(service);
 
 router.post('/login', auth.login);
 
-export default router.use('/auth', router)
+export default router;
