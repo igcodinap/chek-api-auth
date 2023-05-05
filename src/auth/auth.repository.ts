@@ -1,11 +1,12 @@
 import { PoolConnection } from 'mysql2/promise';
 import { pool } from '../config/database';
-import { User } from './user.model';
+import { User, NewUser } from './user.model';
+import AppError from '../errors/AppError';
 
 export interface IAuthRepository {
     getById(id: string): Promise<User>;
     getByEmail(email: string): Promise<User>;
-    insert(user: User): Promise<User>;
+    insertOne(user: NewUser): Promise<void>;
 }
 
 
@@ -20,11 +21,11 @@ export class AuthRepositoryDB implements IAuthRepository{
             const [rows] = await connection.execute(this.getByIdQuery, [id]);
             const users = rows as User[];
             const user = users[0];
-            console.log(user, 'user at auth repository')
+            if (!user) throw new AppError(404, 'User not found');
             return user;
         } catch (error) {
-            console.log(error)
-            throw error;
+            if (error instanceof AppError) throw error;
+            throw new AppError(500, 'Internal Server Error');
         } finally {
             if (connection) connection.release();
         }
@@ -37,18 +38,29 @@ export class AuthRepositoryDB implements IAuthRepository{
             const [rows] = await connection.execute(this.getByEmailQuery, [email]);
             const users = rows as User[];
             const user = users[0];
+            if (!user) throw new AppError(404, 'User not found');
             console.log(user, 'user at auth repository')
             return user;
         } catch (error) {
-            console.log(error)
-            throw error;
+            if (error instanceof AppError) throw error;
+            throw new AppError(500, 'Internal Server Error');
         } finally {
             if (connection) connection.release();
         }
     }
 
-    async insert(user: User): Promise<User> {
-        // WIP
-        return user;
+    async insertOne(user: NewUser): Promise<void> {
+        let connection: PoolConnection | undefined;
+        try {
+            connection = await pool.getConnection();
+            const insertOneQuery = "INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)";
+            await connection.execute(insertOneQuery, [user.name, user.lastname, user.email, user.password]);
+            return
+        } catch (error) {
+            if (error instanceof AppError) throw error;
+            throw new AppError(500, 'Internal Server Error');
+        } finally {
+            if (connection) connection.release();
+        }
     }
 }

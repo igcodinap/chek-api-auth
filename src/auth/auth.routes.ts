@@ -9,5 +9,6 @@ const service = new AuthService(repository);
 const auth = new AuthMiddleware(service);
 
 router.post('/login', auth.login);
+router.post('/register', auth.register)
 
 export default router;
