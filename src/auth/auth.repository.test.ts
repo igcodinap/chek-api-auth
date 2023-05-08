@@ -1,6 +1,7 @@
 import { AuthRepositoryDB } from "./auth.repository";
 import { pool } from "../config/database";
 import { User } from "./user.model";
+import AppError from "../errors/AppError";
 
 jest.mock('../config/database');
 
@@ -34,5 +35,14 @@ describe('AuthRepositoryDB', () => {
                 [strId]
             );
         });
+        it('should throw an AppError if the user is not found', async () => {
+            const id = '1';
+      
+            (pool.execute as jest.Mock).mockResolvedValue([[]]);
+      
+            await expect(authRepository.getById(id)).rejects.toThrow(AppError);
+      
+            expect(pool.execute).toHaveBeenCalledWith(authRepository.getByIdQuery, [id]);
+          });
     });
 });

@@ -10,9 +10,9 @@ export interface IAuthRepository {
 
 
 export class AuthRepositoryDB implements IAuthRepository{
-    private readonly getByIdQuery = "SELECT id, name, lastname, email, password, jwt_token FROM users WHERE id = ?";
-    private readonly getByEmailQuery = "SELECT id, name, lastname, email, password FROM users WHERE email = ?";
-    private readonly insertOneQuery = "INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)";
+    readonly getByIdQuery = "SELECT id, name, lastname, email, password, jwt_token FROM users WHERE id = ?";
+    readonly getByEmailQuery = "SELECT id, name, lastname, email, password FROM users WHERE email = ?";
+    readonly insertOneQuery = "INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)";
 
     async getById(id: string): Promise<User> {
         try {
