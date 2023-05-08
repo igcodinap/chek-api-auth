@@ -104,7 +104,11 @@ describe('AuthRepositoryDB', () => {
               password: '123456',
             };
 
-            (pool.execute as jest.Mock).mockResolvedValue([[]]);
+            (pool.execute as jest.Mock).mockResolvedValue([
+                {
+                    affectedRows: 0,
+                },
+            ]);
 
             await expect(authRepository.insertOne(newUser)).rejects.toThrow(AppError);
 
