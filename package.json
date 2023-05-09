@@ -4,6 +4,8 @@
   "description": "api for auth actions",
   "main": "app.js",
   "scripts": {
+    "start": "node ./build/app.js",
+    "build": "tsc",
     "start:dev": "ts-node ./src/app.ts",
     "test": "jest",
     "test:coverage": "jest --coverage --coverageReporters=text-summary --coverageReporters=html",
