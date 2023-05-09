@@ -15,43 +15,30 @@ export class AuthService implements IAuthService {
     }
 
     async login(email: string, password: string) {
-        try {
-            const user = await this.repository.getByEmail(email);
-            console.log(user, 'user at auth service')
-            if (!user) {
-                throw new AppError(401 , 'Invalid email');
-            }
-            const isValid = await PasswordService.comparePasswords(password, user.password);
-            console.log(isValid, 'isValid')
-            if (!isValid) {
-                throw new AppError(401 , 'Invalid email or password');
-            }
-            user.jwt_token = JwtService.generateToken({ user });
-            console.log(user.jwt_token, 'jwt_token')
-            return user;
-        } catch (error) {
-            console.log('an error ocurred at auth service')
-            throw error;
+        const user = await this.repository.getByEmail(email);
+        if (!user) {
+            throw new AppError(401, 'Invalid email');
         }
+        const isValid = await PasswordService.comparePasswords(password, user.password);
+        if (!isValid) {
+            throw new AppError(401, 'Invalid email or password');
+        }
+        user.jwt_token = JwtService.generateToken({ user });
+        return user;
     }
 
     async register(user: NewUser) {
-        try {
-            const userExists = await this.repository.getByEmail(user.email);
-            if (userExists) {
-                throw new AppError(409, 'User already exists');
-            }
-            const hashedPassword = await PasswordService.hashPassword(user.password);
-            user.password = hashedPassword;
-            await this.repository.insertOne(user);
-            const createdUser = await this.repository.getByEmail(user.email);
-            if (!createdUser) {
-                throw new AppError(500, 'User not created');
-            }
-            return createdUser;
-        } catch (error) {
-            console.log('an error ocurred at auth service')
-            throw error;
+        const userExists = await this.repository.getByEmail(user.email);
+        if (userExists) {
+            throw new AppError(409, 'User already exists');
         }
+        const hashedPassword = await PasswordService.hashPassword(user.password);
+        user.password = hashedPassword;
+        await this.repository.insertOne(user);
+        const createdUser = await this.repository.getByEmail(user.email);
+        if (!createdUser) {
+            throw new AppError(500, 'User not created');
+        }
+        return createdUser;
     }
 }
