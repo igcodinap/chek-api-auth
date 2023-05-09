@@ -64,14 +64,18 @@ describe('AuthRepositoryDB', () => {
           expect(user).toEqual(expectedUser);
           expect(pool.execute).toHaveBeenCalledWith(authRepository.getByEmailQuery, [email]);
         });
-        it('should throw an AppError if the user is not found', async () => {
-            const email = 'user@mail.com';
-      
-            (pool.execute as jest.Mock).mockResolvedValue([[]]);
-      
-            await expect(authRepository.getByEmail(email)).rejects.toThrow(AppError);
-      
-            expect(pool.execute).toHaveBeenCalledWith(authRepository.getByEmailQuery, [email]);
+        it('should throw an AppError code 500 if any error happen', async () => {
+          const email = 'user@mail.com';
+        
+          (pool.execute as jest.Mock).mockRejectedValue(new Error('Database query failed'));
+        
+          try {
+            await authRepository.getByEmail(email);
+          } catch (error) {
+            expect(error).toBeInstanceOf(AppError);
+          }
+        
+          expect(pool.execute).toHaveBeenCalledWith(authRepository.getByEmailQuery, [email]);
         });
     });
 

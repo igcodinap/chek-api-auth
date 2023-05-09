@@ -33,11 +33,8 @@ export class AuthRepositoryDB implements IAuthRepository{
             const [rows] = await pool.execute(this.getByEmailQuery, [email]);
             const users = rows as User[];
             const user = users[0];
-            if (!user) throw new AppError(404, 'User not found');
-            console.log(user, 'user at auth repository')
             return user;
         } catch (error) {
-            if (error instanceof AppError) throw error;
             throw new AppError(500, 'Internal Server Error');
         }
     }
