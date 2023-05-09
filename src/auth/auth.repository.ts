@@ -1,6 +1,7 @@
 import { pool } from '../config/database';
 import { User, NewUser } from './user.model';
 import AppError from '../errors/AppError';
+import { ResultSetHeader } from 'mysql2';
 
 export interface IAuthRepository {
     getById(id: string): Promise<User>;
@@ -43,7 +44,10 @@ export class AuthRepositoryDB implements IAuthRepository{
 
     async insertOne(user: NewUser): Promise<void> {
         try {
-            await pool.execute(this.insertOneQuery, [user.name, user.lastname, user.email, user.password]);
+            const [result] = await pool.execute(this.insertOneQuery, [user.name, user.lastname, user.email, user.password]);
+            const success = result as ResultSetHeader;
+            if (!success.affectedRows) throw new AppError(400, 'Error creating wallet');
+
             return
         } catch (error) {
             if (error instanceof AppError) throw error;

@@ -84,7 +84,9 @@ describe('AuthRepositoryDB', () => {
             password: '123456',
           };
     
-          (pool.execute as jest.Mock).mockResolvedValue([{}]);
+          (pool.execute as jest.Mock).mockResolvedValue([{
+            affectedRows: 1,
+          }]);
     
           await authRepository.insertOne(newUser);
     
@@ -96,28 +98,28 @@ describe('AuthRepositoryDB', () => {
           ]);
         });
 
-        // it('should throw an AppError if the user is not created', async () => {
-        //     const newUser: NewUser = {
-        //       name: 'testname',
-        //       lastname: 'testlastname',
-        //       email: 'user@mail.com',
-        //       password: '123456',
-        //     };
-
-        //     (pool.execute as jest.Mock).mockResolvedValue([
-        //         {
-        //             affectedRows: 0,
-        //         },
-        //     ]);
-        //     // failing, wip
-        //     // await expect(authRepository.insertOne(newUser)).rejects.toThrow(AppError);
-
-        //     // expect(pool.execute).toHaveBeenCalledWith(authRepository.insertOneQuery, [
-        //     //     newUser.name,
-        //     //     newUser.lastname,
-        //     //     newUser.email,
-        //     //     newUser.password,
-        //     // ]);
-        // });
+        it('should throw an AppError if the user is not created', async () => {
+          const newUser: NewUser = {
+              name: 'testname',
+              lastname: 'testlastname',
+              email: 'user@mail.com',
+              password: '123456',
+          };
+      
+          (pool.execute as jest.Mock).mockResolvedValue([
+              {
+                  affectedRows: 0,
+              },
+          ]);
+      
+          await expect(authRepository.insertOne(newUser)).rejects.toThrow(AppError);
+      
+          expect(pool.execute).toHaveBeenCalledWith(authRepository.insertOneQuery, [
+              newUser.name,
+              newUser.lastname,
+              newUser.email,
+              newUser.password,
+          ]);
+      });
     });
 });
