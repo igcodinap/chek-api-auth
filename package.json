@@ -6,7 +6,9 @@
   "scripts": {
     "start:dev": "ts-node ./src/app.ts",
     "test": "jest",
+    "test:coverage": "jest --coverage --coverageReporters=text-summary --coverageReporters=html",
     "eslint": "eslint . --ext .ts --fix"
+    
   },
   "author": "igcodinap",
   "license": "ISC",
