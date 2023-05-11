@@ -52,6 +52,30 @@ describe('AuthService', () => {
             expect(user.jwt_token).toBe(jwtToken);
         });
         //pending fail flow
+        it('should throw an error if user does not exist', async () => {
+            const email = 'user@mail.com';
+            const password = '123456';
+
+            (authRepository.getByEmail as jest.Mock).mockResolvedValue(undefined);
+
+            await expect(authService.login(email, password)).rejects.toThrow('Invalid email');
+            expect(authRepository.getByEmail).toHaveBeenCalledWith(email);
+        });
+
+        it('should throw an error if password is incorrect', async () => {
+            const testUser = {
+                email: 'user@email.com',
+                password: '123456',
+            };
+
+            (authRepository.getByEmail as jest.Mock).mockResolvedValue(testUser);
+            (PasswordService.comparePasswords as jest.Mock).mockResolvedValue(false);
+
+            await expect(authService.login(testUser.email, testUser.password)).rejects.toThrow('Invalid email or password');
+            expect(authRepository.getByEmail).toHaveBeenCalledWith(testUser.email);
+            expect(PasswordService.comparePasswords).toHaveBeenCalledWith(testUser.password, testUser.password);
+        });
+
     })
 
     describe('register', () => {
@@ -101,6 +125,24 @@ describe('AuthService', () => {
             await expect(authService.register(newUser)).rejects.toThrow(AppError);
         
             expect(authRepository.getByEmail).toHaveBeenCalledWith(newUser.email);
-        });        
+        });
+        
+        it ('should thorw an error if the user was not created', async () => {
+            const newUser: NewUser = {
+                name: 'testname',
+                lastname: 'testlastname',
+                email: 'user@mail.com',
+                password: '123456',
+            };
+            const hashedPassword = 'hashedPassword123456';
+
+            (authRepository.getByEmail as jest.Mock).mockResolvedValue(null);
+            (PasswordService.hashPassword as jest.Mock).mockResolvedValue(hashedPassword);
+            (authRepository.getByEmail as jest.Mock).mockResolvedValue(null);
+
+            await expect(authService.register(newUser)).rejects.toThrow(AppError);
+            expect(authRepository.getByEmail).toHaveBeenCalledWith(newUser.email);
+            
+        })
     })
 });

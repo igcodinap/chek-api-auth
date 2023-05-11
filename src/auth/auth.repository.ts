@@ -20,10 +20,8 @@ export class AuthRepositoryDB implements IAuthRepository{
             const [rows] = await pool.execute(this.getByIdQuery, [id]);
             const users = rows as User[];
             const user = users[0];
-            if (!user) throw new AppError(404, 'User not found');
             return user;
         } catch (error) {
-            if (error instanceof AppError) throw error;
             throw new AppError(500, 'Internal Server Error');
         }
     }
@@ -43,8 +41,7 @@ export class AuthRepositoryDB implements IAuthRepository{
         try {
             const [result] = await pool.execute(this.insertOneQuery, [user.name, user.lastname, user.email, user.password]);
             const success = result as ResultSetHeader;
-            if (!success.affectedRows) throw new AppError(400, 'Error creating wallet');
-
+            if (!success.affectedRows) throw new AppError(400, 'Error creating user');
             return
         } catch (error) {
             if (error instanceof AppError) throw error;
