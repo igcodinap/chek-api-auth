@@ -8,7 +8,6 @@ export class PasswordService {
   }
 
   static async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
-    console.log('comparing passwords')
     const isValid = await bcrypt.compare(password, hashedPassword);
     return isValid;
   }
