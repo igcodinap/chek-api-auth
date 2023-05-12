@@ -1,17 +1,18 @@
-import { NextFunction, Request, Response } from 'express';
-import { AuthMiddleware } from './auth.middleware';
-import { IAuthService } from './auth.service';
-import { NewUser } from './user.model';
+import { NextFunction, Request, Response } from "express";
+import { AuthMiddleware } from "./auth.middleware";
+import { IAuthService } from "./auth.service";
+import { NewUser } from "./user.model";
 
 const mockAuthService: jest.Mocked<IAuthService> = {
   login: jest.fn(),
   register: jest.fn(),
 };
 
-const mockRequest = (body = {}, params = {}) => ({
-  body,
-  params,
-}) as Request;
+const mockRequest = (body = {}, params = {}) =>
+  ({
+    body,
+    params,
+  } as Request);
 
 const mockResponse = () => {
   const res = {} as Response;
@@ -25,7 +26,7 @@ const mockNextFunction = () => {
   return next;
 };
 
-describe('AuthMiddleware', () => {
+describe("AuthMiddleware", () => {
   let authMiddleware: AuthMiddleware;
 
   beforeEach(() => {
@@ -33,20 +34,20 @@ describe('AuthMiddleware', () => {
     authMiddleware = new AuthMiddleware(mockAuthService);
   });
 
-  describe('login', () => {
-    it('should log in a user and return a 200 status code', async () => {
-      const req = mockRequest({ email: 'user@mail.com', password: '123456' });
+  describe("login", () => {
+    it("should log in a user and return a 200 status code", async () => {
+      const req = mockRequest({ email: "user@mail.com", password: "123456" });
       const res = mockResponse();
       const next = mockNextFunction();
 
       const { email, password } = req.body;
       const user = {
         id: 1,
-        name: 'username',
-        lastname: 'userlastname',
+        name: "username",
+        lastname: "userlastname",
         email,
         password,
-        jwt_token: 'fake_token',
+        jwt_token: "fake_token",
       };
 
       mockAuthService.login.mockResolvedValue(user);
@@ -58,27 +59,37 @@ describe('AuthMiddleware', () => {
       expect(res.json).toHaveBeenCalledWith(user);
     });
 
-    it('should call next with an error when login fails', async () => {
-      const req = mockRequest({ email: 'user@mail.com', password: 'wrong_123456' });
+    it("should call next with an error when login fails", async () => {
+      const req = mockRequest({
+        email: "user@mail.com",
+        password: "wrong_123456",
+      });
       const res = mockResponse();
       const next = jest.fn();
 
       const { email, password } = req.body;
 
-      mockAuthService.login.mockRejectedValue(new Error('Invalid email or password'));
+      mockAuthService.login.mockRejectedValue(
+        new Error("Invalid email or password")
+      );
 
       await authMiddleware.login(req, res, next);
 
       expect(mockAuthService.login).toHaveBeenCalledWith(email, password);
-      expect(next).toHaveBeenCalledWith(new Error('Invalid email or password'));
+      expect(next).toHaveBeenCalledWith(new Error("Invalid email or password"));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });
   });
 
-  describe('register', () => {
-    it('should register a user and return a 200 status code', async () => {
-      const req = mockRequest({ name: 'username', lastname: 'userlastname', email: 'user@mail.com', password: '123456' });
+  describe("register", () => {
+    it("should register a user and return a 200 status code", async () => {
+      const req = mockRequest({
+        name: "username",
+        lastname: "userlastname",
+        email: "user@mail.com",
+        password: "123456",
+      });
       const res = mockResponse();
       const next = mockNextFunction();
 
@@ -95,20 +106,27 @@ describe('AuthMiddleware', () => {
       expect(res.json).toHaveBeenCalledWith(registeredUser);
     });
 
-    it('should call next with an error when registration fails', async () => {
-      const req = mockRequest({ name: 'username', lastname: 'userlastname', email: 'user@mail.com', password: '123456' });
+    it("should call next with an error when registration fails", async () => {
+      const req = mockRequest({
+        name: "username",
+        lastname: "userlastname",
+        email: "user@mail.com",
+        password: "123456",
+      });
       const res = mockResponse();
       const next = jest.fn();
 
       const { name, lastname, email, password } = req.body;
       const newUser = new NewUser(name, lastname, email, password);
 
-      mockAuthService.register.mockRejectedValue(new Error('User already exists'));
+      mockAuthService.register.mockRejectedValue(
+        new Error("User already exists")
+      );
 
       await authMiddleware.register(req, res, next);
 
       expect(mockAuthService.register).toHaveBeenCalledWith(newUser);
-      expect(next).toHaveBeenCalledWith(new Error('User already exists'));
+      expect(next).toHaveBeenCalledWith(new Error("User already exists"));
       expect(res.status).not.toHaveBeenCalled();
       expect(res.json).not.toHaveBeenCalled();
     });

@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
-import { User } from '../auth/user.model';
+import jwt from "jsonwebtoken";
+import { User } from "../auth/user.model";
 
 export class JwtService {
-  static jwtSecret:string = process.env.JWT_SECRET || '';
+  static jwtSecret: string = process.env.JWT_SECRET || "";
 
   static generateToken(payload: Record<string, User>): string {
     const token = jwt.sign(payload, this.jwtSecret);

@@ -3,9 +3,9 @@ import { pool } from "../config/database";
 import { User, NewUser } from "./user.model";
 import AppError from "../errors/AppError";
 
-jest.mock('../config/database');
+jest.mock("../config/database");
 
-describe('AuthRepositoryDB', () => {
+describe("AuthRepositoryDB", () => {
   let authRepository: AuthRepositoryDB;
 
   beforeEach(() => {
@@ -13,15 +13,15 @@ describe('AuthRepositoryDB', () => {
     (pool.execute as jest.Mock).mockClear();
   });
 
-  describe('getById', () => {
-    it('should return a user', async () => {
+  describe("getById", () => {
+    it("should return a user", async () => {
       const id = 1;
       const user: User = {
         id,
-        name: 'John',
-        lastname: 'Doe',
-        password: '123456',
-        email: 'user@mail.com',
+        name: "John",
+        lastname: "Doe",
+        password: "123456",
+        email: "user@mail.com",
       };
       (pool.execute as jest.Mock).mockResolvedValueOnce([[user]]);
 
@@ -31,31 +31,33 @@ describe('AuthRepositoryDB', () => {
       expect(result).toEqual(user);
       expect(pool.execute).toHaveBeenCalledTimes(1);
       expect(pool.execute).toHaveBeenCalledWith(
-        'SELECT id, name, lastname, email, password, jwt_token FROM users WHERE id = ?',
+        "SELECT id, name, lastname, email, password, jwt_token FROM users WHERE id = ?",
         [strId]
       );
     });
-    it('should throw an AppError if the user is not found', async () => {
-      const id = '1';
-      const poolError = new Error('Database query failed');
+    it("should throw an AppError if the user is not found", async () => {
+      const id = "1";
+      const poolError = new Error("Database query failed");
 
       (pool.execute as jest.Mock).mockRejectedValue(poolError);
 
       await expect(authRepository.getById(id)).rejects.toThrow(AppError);
 
-      expect(pool.execute).toHaveBeenCalledWith(authRepository.getByIdQuery, [id]);
+      expect(pool.execute).toHaveBeenCalledWith(authRepository.getByIdQuery, [
+        id,
+      ]);
     });
   });
 
-  describe('getByEmail', () => {
-    it('should return a user by email', async () => {
-      const email = 'user@mail.com';
+  describe("getByEmail", () => {
+    it("should return a user by email", async () => {
+      const email = "user@mail.com";
       const expectedUser: User = {
         id: 1,
-        name: 'Ignacio',
-        lastname: 'Codina',
+        name: "Ignacio",
+        lastname: "Codina",
         email,
-        password: '123456',
+        password: "123456",
       };
 
       (pool.execute as jest.Mock).mockResolvedValue([[expectedUser]]);
@@ -63,11 +65,14 @@ describe('AuthRepositoryDB', () => {
       const user = await authRepository.getByEmail(email);
 
       expect(user).toEqual(expectedUser);
-      expect(pool.execute).toHaveBeenCalledWith(authRepository.getByEmailQuery, [email]);
+      expect(pool.execute).toHaveBeenCalledWith(
+        authRepository.getByEmailQuery,
+        [email]
+      );
     });
-    it('should throw an AppError if pool connection fails', async () => {
-      const email = 'user@email.com';
-      const poolError = new Error('Database query failed');
+    it("should throw an AppError if pool connection fails", async () => {
+      const email = "user@email.com";
+      const poolError = new Error("Database query failed");
 
       (pool.execute as jest.Mock).mockRejectedValue(poolError);
 
@@ -75,18 +80,20 @@ describe('AuthRepositoryDB', () => {
     });
   });
 
-  describe('insertOne', () => {
-    it('should insert a new user', async () => {
+  describe("insertOne", () => {
+    it("should insert a new user", async () => {
       const newUser: NewUser = {
-        name: 'testname',
-        lastname: 'testlastname',
-        email: 'user@mail.com',
-        password: '123456',
+        name: "testname",
+        lastname: "testlastname",
+        email: "user@mail.com",
+        password: "123456",
       };
 
-      (pool.execute as jest.Mock).mockResolvedValue([{
-        affectedRows: 1,
-      }]);
+      (pool.execute as jest.Mock).mockResolvedValue([
+        {
+          affectedRows: 1,
+        },
+      ]);
 
       await authRepository.insertOne(newUser);
 
@@ -98,12 +105,12 @@ describe('AuthRepositoryDB', () => {
       ]);
     });
 
-    it('should throw an AppError if the user is not created', async () => {
+    it("should throw an AppError if the user is not created", async () => {
       const newUser: NewUser = {
-        name: 'testname',
-        lastname: 'testlastname',
-        email: 'user@mail.com',
-        password: '123456',
+        name: "testname",
+        lastname: "testlastname",
+        email: "user@mail.com",
+        password: "123456",
       };
 
       (pool.execute as jest.Mock).mockResolvedValue([
@@ -122,14 +129,14 @@ describe('AuthRepositoryDB', () => {
       ]);
     });
 
-    it('should throw an AppError if pool connection fails', async () => {
+    it("should throw an AppError if pool connection fails", async () => {
       const newUser: NewUser = {
-        name: 'testname',
-        lastname: 'testlastname',
-        email: 'user@mail.com',
-        password: '123456',
+        name: "testname",
+        lastname: "testlastname",
+        email: "user@mail.com",
+        password: "123456",
       };
-      const poolError = new Error('Database query failed');
+      const poolError = new Error("Database query failed");
 
       (pool.execute as jest.Mock).mockRejectedValue(poolError);
 
