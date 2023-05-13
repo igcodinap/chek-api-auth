@@ -20,14 +20,14 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installation
 
 1. Clone the repo
-\```bash
+```bash
 git clone https://github.com/your-username/your-repo.git
-\```
+```
 
 2. Install NPM packages
-\```bash
+```bash
 npm install
-\```
+```
 
 3. Copy the .env file.
 
@@ -37,16 +37,16 @@ npm install
 
 To run this project in a development mode, use:
 
-\```bash
+```bash
 npm run start:dev
-\```
+```
 
 To build and run this project in a production mode, use:
 
-\```bash
+```bash
 npm run build
 npm start
-\```
+```
 
 ## Running the tests
 
@@ -58,26 +58,26 @@ npm run test
 
 For test coverage, use:
 
-\```bash
+```bash
 npm run test:coverage
-\```
+```
 
 ## Linting
 
 This project uses ESLint and Prettier for linting. You can check for linting issues using:
 
-\```bash
+```bash
 npm run lint
-\```
+```
 
 
 ## Formatting
 
 This project uses Prettier for code formatting. You can format your code using:
 
-\```bash
+```bash
 npm run format
-\```
+```
 
 ## Built With
 
