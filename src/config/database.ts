@@ -15,6 +15,4 @@ const dbConfig = {
   socketPath: process.env.CLOUD_SQL_CONNECTION_NAME,
 };
 
-console.log(dbConfig, "dbConfig");
-
 export const pool = mysql.createPool(dbConfig);

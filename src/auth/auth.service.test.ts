@@ -54,7 +54,6 @@ describe("AuthService", () => {
       expect(JwtService.generateToken).toHaveBeenCalled();
       expect(user.jwt_token).toBe(jwtToken);
     });
-    //pending fail flow
     it("should throw an error if user does not exist", async () => {
       const email = "user@mail.com";
       const password = "123456";
